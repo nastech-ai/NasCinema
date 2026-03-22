@@ -21,6 +21,7 @@ const CanvasView = dynamic(
   { ssr: false },
 );
 
+// Threshold to determine if the series is large enough to use the canvas view. (Episodes)
 const LARGE_SERIES_THRESHOLD = 75;
 
 type SeriesGraphProps = {
