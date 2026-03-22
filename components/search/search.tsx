@@ -8,7 +8,7 @@ import { cn } from "@/lib/utils";
 import { ArrowRight, Search } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { forwardRef, useCallback, useEffect, useRef, useState } from "react";
-import { Poster } from "../media/media-poster";
+import { Poster } from "@/components/media/media-display";
 import SearchResults from "./search-results";
 
 interface SearchComponentProps {
@@ -257,7 +257,6 @@ export const NavbarSearchClient = forwardRef<
               setShowPreview(false);
             }
           } else {
-            // no result selected or "go to search page" selected, go to search page
             handleSearch();
           }
           break;
@@ -277,7 +276,6 @@ export const NavbarSearchClient = forwardRef<
   }, [showPreview, results, selectedIndex, handleSearch, router, inputRef]);
 
   useEffect(() => {
-    // don't auto-select first result, keep selectedIndex at -1 (no selection)
     setSelectedIndex(-1);
   }, [results]);
 
@@ -331,6 +329,7 @@ export const NavbarSearchClient = forwardRef<
             ref={inputRef}
             type="text"
             placeholder="Search..."
+            suppressHydrationWarning
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             onFocus={() => {
@@ -349,7 +348,6 @@ export const NavbarSearchClient = forwardRef<
             }}
             onKeyDown={(e) => {
               if (e.key === "Enter") {
-                // always go to search page when pressing enter, unless a specific result is selected
                 if (!showPreview || selectedIndex === -1) {
                   handleSearch();
                 }
@@ -452,6 +450,7 @@ export const NavbarSearchClient = forwardRef<
                   </div>
                   <div className="border-t border-border">
                     <button
+                      type="button"
                       onMouseDown={(e) => {
                         e.preventDefault();
                         handleSearch();
@@ -473,6 +472,7 @@ export const NavbarSearchClient = forwardRef<
                     No results found
                   </p>
                   <button
+                    type="button"
                     onMouseDown={(e) => {
                       e.preventDefault();
                       handleSearch();
