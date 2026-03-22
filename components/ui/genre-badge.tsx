@@ -35,8 +35,8 @@ export function GenreBadge({
 }: GenreBadgeProps) {
   const href =
     mediaType === "movie"
-      ? `/movies/browse?genre=${genreId}`
-      : `/tvshows/browse?genre=${genreId}`;
+      ? `/movies?view=discover&with_genres=${genreId}`
+      : `/tvshows?view=discover&with_genres=${genreId}`;
   const tooltipText = `Browse ${genreName} ${mediaType === "movie" ? "movies" : "TV shows"}`;
 
   if (!clickable) {
