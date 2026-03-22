@@ -32,7 +32,7 @@ export function generateRowHref(
   mediaType: string,
 ): string {
   const { category } = config;
-  const urlPath = mediaType === "tv" ? "tvshows" : `${mediaType}s`;
+  const catalogBase = mediaType === "tv" ? "/tvshows" : "/movies";
   if (category.startsWith("genre-")) {
     const genreMap: Record<string, string> = {
       "genre-action": "28",
@@ -46,11 +46,11 @@ export function generateRowHref(
       "genre-mystery": "9648",
       "genre-romance": "10749",
     };
-    return `/${urlPath}/browse?genre=${genreMap[category] || category.replace("genre-", "")}`;
+    return `${catalogBase}?view=discover&with_genres=${genreMap[category] || category.replace("genre-", "")}`;
   } else if (category.startsWith("director-")) {
-    return `/${urlPath}/browse?type=${category}`;
+    return `${catalogBase}?view=discover&type=${category}`;
   } else if (category.startsWith("studio-")) {
-    return `/${urlPath}/browse?type=${category}`;
+    return `${catalogBase}?view=discover&type=${category}`;
   } else if (category.startsWith("year-")) {
     const yearMap: Record<string, string> = {
       "year-80s": "1980-1989",
@@ -58,15 +58,24 @@ export function generateRowHref(
       "year-2000s": "2000-2009",
       "year-2010s": "2010-2019",
     };
-    return `/${urlPath}/browse?year=${yearMap[category] || category.replace("year-", "")}`;
+    return `${catalogBase}?view=discover&year=${yearMap[category] || category.replace("year-", "")}`;
   } else if (
     ["upcoming", "popular", "top-rated", "now-playing"].includes(category)
   ) {
-    return category === "popular"
-      ? `/${urlPath}/browse`
-      : `/${urlPath}/browse?type=${category}`;
+    if (category === "popular") {
+      return `${catalogBase}?view=popular`;
+    }
+    const viewByCategory: Record<string, string> = {
+      upcoming: "upcoming",
+      "top-rated": "top_rated",
+      "now-playing": "now_playing",
+    };
+    const view = viewByCategory[category];
+    return view
+      ? `${catalogBase}?view=${view}`
+      : `${catalogBase}?view=discover`;
   } else {
-    return `/${urlPath}/browse?filter=${category.replace(/^(critically-|hidden-|blockbuster-|award-|cult-|indie-)/, "")}`;
+    return `${catalogBase}?view=discover&filter=${category.replace(/^(critically-|hidden-|blockbuster-|award-|cult-|indie-)/, "")}`;
   }
 }
 
