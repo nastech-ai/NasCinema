@@ -291,6 +291,31 @@ html {
   scrollbar-color: hsl(var(--muted-foreground) / 0.4) hsl(var(--background));
 }
 
+@layer components {
+  .grid-list {
+    @apply grid grid-cols-[repeat(auto-fill,minmax(8rem,1fr))] gap-4 md:grid-cols-[repeat(auto-fill,minmax(12rem,1fr))] lg:grid-cols-[repeat(auto-fill,minmax(15rem,1fr))];
+  }
+  .h-hero {
+    @apply h-[560px] md:h-[780px];
+  }
+  .overlay {
+    @apply absolute inset-0 flex items-end rounded-md border bg-gradient-to-tr from-background/95;
+  }
+  .overlay-darker {
+    @apply absolute inset-0 flex items-end rounded-md border bg-gradient-to-tr from-background/95 to-background/50;
+  }
+  .empty-box {
+    @apply flex h-32 items-center justify-center rounded-lg border border-dashed text-muted-foreground;
+  }
+  .scrollbar-hidden {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  .scrollbar-hidden::-webkit-scrollbar {
+    display: none;
+  }
+}
+
 @theme inline {
   @keyframes float {
     0%,
