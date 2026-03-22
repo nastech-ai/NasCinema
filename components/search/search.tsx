@@ -198,14 +198,15 @@ export function SearchPageClient() {
   );
 }
 
-interface NavbarSearchClientProps {
+export interface NavbarSearchClientProps {
   className?: string;
+  onAfterNavigation?: () => void;
 }
 
 export const NavbarSearchClient = forwardRef<
   HTMLInputElement,
   NavbarSearchClientProps
->(({ className }, ref) => {
+>(({ className, onAfterNavigation }, ref) => {
   const [query, setQuery] = useState("");
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [showPreview, setShowPreview] = useState(false);
@@ -226,10 +227,11 @@ export const NavbarSearchClient = forwardRef<
 
   const handleSearch = useCallback(() => {
     if (query.trim()) {
+      onAfterNavigation?.();
       router.push(`/search?q=${encodeURIComponent(query.trim())}`);
       setShowPreview(false);
     }
-  }, [query, router]);
+  }, [query, router, onAfterNavigation]);
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -253,6 +255,7 @@ export const NavbarSearchClient = forwardRef<
             if (selectedResult) {
               const mediaType =
                 selectedResult.media_type === "movie" ? "movies" : "tvshows";
+              onAfterNavigation?.();
               router.push(`/${mediaType}/${selectedResult.id}`);
               setShowPreview(false);
             }
@@ -273,7 +276,15 @@ export const NavbarSearchClient = forwardRef<
 
     document.addEventListener("keydown", handleKeyDown);
     return () => document.removeEventListener("keydown", handleKeyDown);
-  }, [showPreview, results, selectedIndex, handleSearch, router, inputRef]);
+  }, [
+    showPreview,
+    results,
+    selectedIndex,
+    handleSearch,
+    router,
+    inputRef,
+    onAfterNavigation,
+  ]);
 
   useEffect(() => {
     setSelectedIndex(-1);
@@ -408,6 +419,7 @@ export const NavbarSearchClient = forwardRef<
                           key={`${item.id}-${item.media_type}`}
                           onMouseDown={(e) => {
                             e.preventDefault();
+                            onAfterNavigation?.();
                             router.push(href);
                             setShowPreview(false);
                           }}
