@@ -11,11 +11,3 @@ export const DynamicMediaCarousel = NextDynamic(
     ),
   },
 );
-
-export const LazyContentRowsDynamic = NextDynamic(
-  () =>
-    import("@/components/content/lazy-content-rows").then(
-      (m) => m.LazyContentRows,
-    ),
-  { ssr: false },
-);
