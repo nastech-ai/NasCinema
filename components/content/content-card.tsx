@@ -7,8 +7,7 @@ import { isMovie, isTVShow, MediaItem, Movie, TvShow } from "@/utils/typings";
 import { Star } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { MediaLogo } from "../media/media-logo";
-import { Poster } from "../media/media-poster";
+import { MediaLogo, Poster } from "@/components/media/media-display";
 
 interface ContentCardProps {
   item: MediaItem;
