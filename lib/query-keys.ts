@@ -1,10 +1,6 @@
 export const queryKeys = {
   all: ["nyumatflix"] as const,
 
-  contentRows: () => [...queryKeys.all, "content-rows"] as const,
-  contentRow: (rowId: string, options?: { count?: number; enrich?: boolean }) =>
-    [...queryKeys.contentRows(), rowId, options] as const,
-
   search: () => [...queryKeys.all, "search"] as const,
   searchPreview: (query: string) =>
     [...queryKeys.search(), "preview", query] as const,
