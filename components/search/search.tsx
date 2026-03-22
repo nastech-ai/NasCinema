@@ -353,11 +353,11 @@ export const NavbarSearchClient = forwardRef<
                 }
               }
             }}
-            className="pl-8 pr-20 py-2 text-sm w-full rounded-lg bg-muted/30 border border-muted-foreground/20 focus:border-primary focus:bg-background/50 transition-all duration-200 placeholder:text-muted-foreground/60"
+            className="pl-8 pr-20 py-2 text-sm w-full rounded-full bg-muted/15 border border-border/25 focus:border-primary/50 focus:bg-background/30 transition-all duration-200 placeholder:text-muted-foreground/55"
           />
           <div className="absolute right-3 top-1/2 transform -translate-y-1/2 flex items-center gap-2">
             {isMounted && !query && !isFocused && (
-              <kbd className="hidden lg:inline-block px-1.5 py-0.5 text-xs bg-muted/50 text-muted-foreground rounded border border-muted-foreground/20">
+              <kbd className="hidden lg:inline-block px-1.5 py-0.5 text-xs text-muted-foreground/80 rounded border border-border/30 bg-muted/20">
                 ⌘ K
               </kbd>
             )}
