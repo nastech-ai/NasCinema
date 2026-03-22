@@ -14,21 +14,13 @@ export const DynamicMediaCarousel = NextDynamic(
   },
 );
 
-export const LazyContentRowsDynamic = NextDynamic(
-  () =>
-    import("@/components/content/lazy-content-rows").then(
-      (m) => m.LazyContentRows,
-    ),
-  { ssr: false },
-);
-
 interface StreamingMediaCarouselProps {
   itemsPromise: Promise<MediaItem[]>;
 }
 
-export function StreamingMediaCarousel({
+export const StreamingMediaCarousel = ({
   itemsPromise,
-}: StreamingMediaCarouselProps) {
+}: StreamingMediaCarouselProps) => {
   const items = use(itemsPromise);
   return <DynamicMediaCarousel items={items} />;
-}
+};
