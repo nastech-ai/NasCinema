@@ -14,7 +14,7 @@ import { isMovie, MediaItem, Movie, TvShow } from "@/utils/typings";
 import { Star } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { MediaLogo } from "../media/media-logo";
+import { MediaLogo } from "@/components/media/media-display";
 import { ContentRowHeader } from "./content-row-header";
 
 export interface RankedContentRowProps {
