@@ -1,8 +1,159 @@
 "use client";
 
+import { Icons } from "@/components/icons";
 import { cn } from "@/lib/utils";
+import type { PosterSize } from "@/tmdb/utils";
+import { tmdbImage } from "@/tmdb/utils";
 import Image from "next/image";
-import { useMemo } from "react";
+import { type ComponentProps, type CSSProperties, useMemo } from "react";
+
+const Root: React.FC<ComponentProps<"div">> = ({ className, ...props }) => {
+  return (
+    <div
+      className={cn("group relative w-full overflow-hidden", className)}
+      {...props}
+    />
+  );
+};
+
+const Content: React.FC<ComponentProps<"div">> = ({
+  className,
+  children,
+  ...props
+}) => {
+  return (
+    <div className={cn("overlay", className)} {...props}>
+      <div className="p-2 md:p-6">{children}</div>
+    </div>
+  );
+};
+
+const Title: React.FC<ComponentProps<"h2">> = ({ className, ...props }) => {
+  return (
+    <h2
+      className={cn("line-clamp-1 text-sm font-medium md:text-lg", className)}
+      {...props}
+    />
+  );
+};
+
+const Excerpt: React.FC<ComponentProps<"p">> = ({ className, ...props }) => {
+  return (
+    <p
+      className={cn(
+        "line-clamp-3 text-xs text-muted-foreground md:text-base",
+        className,
+      )}
+      {...props}
+    />
+  );
+};
+
+export const MediaCard = {
+  Root,
+  Content,
+  Title,
+  Excerpt,
+};
+
+export {
+  Root as MediaCardRoot,
+  Content as MediaCardContent,
+  Title as MediaCardTitle,
+  Excerpt as MediaCardExcerpt,
+};
+
+interface MediaPosterProps extends ComponentProps<"div"> {
+  image?: string;
+  size?: PosterSize;
+  alt: string;
+  priority?: boolean;
+  monochrome?: boolean;
+}
+
+type LegacyPosterSize = "small" | "medium" | "large";
+
+const legacyPosterMap: Record<LegacyPosterSize, PosterSize> = {
+  small: "w185",
+  medium: "w342",
+  large: "w500",
+};
+
+type PosterCompatProps = {
+  posterPath?: string | null;
+  title?: string;
+  size?: LegacyPosterSize | PosterSize;
+  className?: string;
+};
+
+export function Poster({
+  posterPath,
+  title = "",
+  size = "w342",
+  className,
+}: PosterCompatProps) {
+  const resolved: PosterSize =
+    size === "small" || size === "medium" || size === "large"
+      ? legacyPosterMap[size]
+      : size;
+
+  return (
+    <MediaPoster
+      image={posterPath ?? undefined}
+      alt={title}
+      size={resolved}
+      className={className}
+    />
+  );
+}
+
+export const MediaPoster: React.FC<MediaPosterProps> = ({
+  image,
+  size = "w500",
+  alt,
+  className,
+  priority,
+  monochrome,
+  ...props
+}) => {
+  const src = image ? tmdbImage.poster(image, size) : null;
+
+  if (!src) {
+    return (
+      <div
+        className={cn(
+          "relative aspect-poster w-full rounded-md border bg-muted text-muted-foreground",
+          className,
+        )}
+        {...props}
+      >
+        <div className="grid size-full min-h-0 place-items-center">
+          <Icons.Logo className="size-12" />
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div
+      className={cn(
+        "relative aspect-poster w-full overflow-hidden rounded-md border bg-muted",
+        className,
+      )}
+      {...props}
+    >
+      <Image
+        src={src}
+        alt={alt}
+        priority={priority}
+        unoptimized
+        fill
+        sizes="(max-width: 768px) 40vw, (max-width: 1200px) 20vw, 200px"
+        className={cn("object-cover", monochrome && "grayscale")}
+      />
+    </div>
+  );
+};
 
 interface MediaLogoProps {
   logo?: {
@@ -14,36 +165,12 @@ interface MediaLogoProps {
   title?: string;
   className?: string;
   fallbackClassName?: string;
-  /**
-   * Container size variant - affects max dimensions
-   * - 'small': Compact spaces (cards, lists)
-   * - 'medium': Default hero/carousel sizes
-   * - 'large': Full-width hero sections
-   * - 'xlarge': Extra large hero/section
-   * - '2xxl': Largest extra-visual header
-   */
   size?: "small" | "medium" | "large" | "xlarge" | "2xxl";
-  /**
-   * Maximum height override (CSS value, e.g., "300px")
-   */
   maxHeight?: string;
-  /**
-   * Maximum width override (CSS value, e.g., "500px")
-   */
   maxWidth?: string;
-  /**
-   * Alignment of the logo within its container
-   * @default "left"
-   */
   align?: "left" | "center" | "right";
 }
 
-/**
- * Displays a media title logo inside a responsive container.
- * Automatically adjusts based on logo aspect ratio and container size.
- * Falls back to text when a logo asset is unavailable.
- * v3.3 supports various aspect ratios and extra large sizes.
- */
 export function MediaLogo({
   logo,
   title,
@@ -124,13 +251,12 @@ export function MediaLogo({
 
     const getClass = () => {
       if (size in sizeVariants) {
-        // @ts-ignore
+        // @ts-ignore dynamic key
         const variant = sizeVariants[size];
-        // @ts-ignore
+        // @ts-ignore dynamic key
         return cn(base, variant[aspectType], className);
       }
-      // Fallback to medium
-      // @ts-ignore
+      // @ts-ignore dynamic key
       return cn(base, sizeVariants["medium"][aspectType], className);
     };
 
@@ -155,7 +281,7 @@ export function MediaLogo({
   }, [size]);
 
   if (logo?.file_path) {
-    const style: React.CSSProperties = {};
+    const style: CSSProperties = {};
     if (maxHeight) style.maxHeight = maxHeight;
     if (maxWidth) style.maxWidth = maxWidth;
 
