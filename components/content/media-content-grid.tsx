@@ -7,8 +7,8 @@ import {
   type ContentItem,
   type ViewMode,
 } from "@/components/content-grid";
-import { MediaCard } from "@/components/media/media-card";
-import { MediaLogo } from "@/components/media/media-logo";
+import MediaShowcaseCard from "@/components/media/media-client";
+import { MediaLogo } from "@/components/media/media-display";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { CountryBadge } from "@/components/ui/country-badge";
@@ -360,7 +360,7 @@ export function MediaContentGrid({
 
     return (
       <div key={`${mediaItem.id}`} className="w-full">
-        <MediaCard
+        <MediaShowcaseCard
           item={mediaItem}
           type={mediaItem.media_type}
           rating={mediaItem.content_rating || undefined}
