@@ -9,6 +9,8 @@ if (!msgFile) {
 }
 
 const msg = fs.readFileSync(msgFile, "utf8");
+const firstLine = msg.split(/\r?\n/)[0] ?? "";
 
-const re = new RegExp("^\\s*(" + emojiRegex.source + ")");
-if (!re.test(msg)) process.exit(1);
+const hasEmojiInSubject = new RegExp(emojiRegex.source, "gu").test(firstLine);
+if (hasEmojiInSubject) process.exit(0);
+process.exit(1);
