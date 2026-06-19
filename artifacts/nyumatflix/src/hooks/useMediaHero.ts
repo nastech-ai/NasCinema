@@ -14,7 +14,6 @@ export interface UseMediaHeroState {
   isPreviewPlaying: boolean;
   isMuted: boolean;
   youtubePlayer: YouTubePlayer;
-  previewPlayer: YouTubePlayer;
   historyLength: number;
   previewTrailerKey: string | null;
 }
@@ -72,7 +71,6 @@ export const useMediaHero = ({
   const [isPreviewPlaying, setIsPreviewPlaying] = useState<boolean>(false);
   const [isMuted, setIsMuted] = useState<boolean>(true);
   const [youtubePlayer, setYoutubePlayer] = useState<YouTubePlayer>(null);
-  const [previewPlayer, setPreviewPlayer] = useState<YouTubePlayer>(null);
   const [historyLength, setHistoryLength] = useState<number>(2);
   const [previewTrailerKey, setPreviewTrailerKey] = useState<string | null>(null);
   const controls = useAnimation();
@@ -84,13 +82,9 @@ export const useMediaHero = ({
   const searchParams = new URLSearchParams(searchStr);
 
   // Clear preview when slide changes
-  const clearPreview = useCallback((player?: YouTubePlayer) => {
+  const clearPreview = useCallback(() => {
     setIsPreviewPlaying(false);
     setIsMuted(true);
-    if (player) {
-      try { player.destroy(); } catch { /* ignore */ }
-    }
-    setPreviewPlayer(null);
     setPreviewTrailerKey(null);
     if (previewTimerRef.current) {
       clearTimeout(previewTimerRef.current);
@@ -187,9 +181,9 @@ export const useMediaHero = ({
 
   const handleWatch = useCallback(() => {
     setIsPlayingTrailer(false);
-    clearPreview(previewPlayer ?? undefined);
+    clearPreview();
     setIsPlayingVideo(true);
-  }, [clearPreview, previewPlayer]);
+  }, [clearPreview]);
 
   useEffect(() => {
     const shouldAutoplay = searchParams.get("autoplay") === "true";
@@ -249,15 +243,14 @@ export const useMediaHero = ({
   const handlePlayTrailer = useCallback(() => {
     const videos = getVideosFromItem(currentItem);
     const trailerVideo = videos.find((v) => ACCEPTABLE_VIDEO_TYPES.includes(v.type));
+    // Fallback to the externally-fetched key for carousel items (which have no embedded videos)
+    const key = trailerVideo?.key || previewTrailerKey;
 
-    if (!trailerVideo?.key) {
-      return;
-    }
+    if (!key) return;
 
-    // Stop preview when playing full trailer
-    clearPreview(previewPlayer ?? undefined);
+    clearPreview();
     setIsPlayingTrailer(true);
-  }, [currentItem, clearPreview, previewPlayer]);
+  }, [currentItem, previewTrailerKey, clearPreview]);
 
   const handleTrailerEnded = useCallback(() => {
     setIsPlayingTrailer(false);
@@ -268,21 +261,11 @@ export const useMediaHero = ({
   const handlePreviewEnded = useCallback(() => {
     setIsPreviewPlaying(false);
     setIsMuted(true);
-    setPreviewPlayer(null);
   }, []);
 
   const handleToggleMute = useCallback(() => {
-    setIsMuted((prev) => {
-      const next = !prev;
-      if (previewPlayer) {
-        try {
-          if (next) previewPlayer.mute();
-          else previewPlayer.unMute();
-        } catch { /* ignore */ }
-      }
-      return next;
-    });
-  }, [previewPlayer]);
+    setIsMuted((prev) => !prev);
+  }, []);
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -310,7 +293,6 @@ export const useMediaHero = ({
     isPreviewPlaying,
     isMuted,
     youtubePlayer,
-    previewPlayer,
     historyLength,
     previewTrailerKey,
     currentItem,
@@ -323,7 +305,6 @@ export const useMediaHero = ({
     handleToggleMute,
     handlePreviewEnded,
     setYoutubePlayer,
-    setPreviewPlayer,
   };
 };
 

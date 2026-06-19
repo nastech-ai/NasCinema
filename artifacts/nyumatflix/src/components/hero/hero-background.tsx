@@ -24,8 +24,6 @@ interface HeroBackgroundProps {
   onPreviewEnded(): void;
   youtubePlayer: YouTubePlayer;
   setYoutubePlayer(player: YouTubePlayer): void;
-  previewPlayer: YouTubePlayer;
-  setPreviewPlayer(player: YouTubePlayer): void;
   anilistId?: number | null | undefined;
   previewTrailerKey?: string | null;
 }
@@ -36,16 +34,13 @@ export function HeroBackground({
   isPlayingVideo,
   isPlayingTrailer,
   isPreviewPlaying,
-  isMuted,
   controls,
   onTrailerEnded,
   onPreviewEnded,
   youtubePlayer,
   setYoutubePlayer,
-  previewPlayer,
-  setPreviewPlayer,
   anilistId,
-  previewTrailerKey: externalPreviewKey,
+  previewTrailerKey: externalTrailerKey,
 }: HeroBackgroundProps) {
   const ytReady = useYouTubeAPI();
   const { getEmbedUrl } = useEpisodeStore();
@@ -71,6 +66,9 @@ export function HeroBackground({
   );
   const trailerKey = trailerVideo?.key;
 
+  // For "Play Trailer" — prefer fetched key over embedded (carousel items have no videos)
+  const activeTrailerKey = externalTrailerKey || trailerKey;
+
   const getMediaType = (): "movie" | "tv" => {
     if (mediaType) return mediaType;
     if (media) {
@@ -87,6 +85,14 @@ export function HeroBackground({
       if (window.location.pathname.includes("/movies/")) return "movie";
     }
     return "movie";
+  };
+
+  // URL for the streaming server background preview
+  const getPreviewUrl = () => {
+    const type = getMediaType();
+    return type === "tv"
+      ? selectedServer.getTvUrl(media.id)
+      : selectedServer.getMovieUrl(media.id);
   };
 
   const getVideoSrc = () => {
@@ -133,7 +139,6 @@ export function HeroBackground({
   };
 
   const pauseTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const previewPauseTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // Key X to stop trailer
   useEffect(() => {
@@ -150,13 +155,13 @@ export function HeroBackground({
     return () => window.removeEventListener("keydown", handleKeyPress);
   }, [isPlayingTrailer, youtubePlayer, onTrailerEnded, setYoutubePlayer]);
 
-  // Full-screen trailer player (user clicked "Play Trailer")
+  // Full-screen YouTube trailer player (user clicked "Play Trailer")
   useEffect(() => {
-    if (isPlayingTrailer && trailerKey && ytReady && typeof window !== "undefined" && window.YT) {
+    if (isPlayingTrailer && activeTrailerKey && ytReady && typeof window !== "undefined" && window.YT) {
       if (!youtubePlayer) {
         try {
           const player = new window.YT.Player("trailer-player", {
-            videoId: trailerKey,
+            videoId: activeTrailerKey,
             playerVars: { autoplay: 1, controls: 1, rel: 0 },
             events: {
               onStateChange: (event: { data: number }) => {
@@ -194,79 +199,7 @@ export function HeroBackground({
         setYoutubePlayer(null);
       }
     };
-  }, [isPlayingTrailer, trailerKey, ytReady, onTrailerEnded, youtubePlayer, setYoutubePlayer]);
-
-  // Background muted preview player (Netflix-style)
-  // Use externally-fetched key (from API) or fall back to embedded trailerKey
-  const activePreviewKey = externalPreviewKey || trailerKey;
-
-  useEffect(() => {
-    if (isPreviewPlaying && activePreviewKey && ytReady && typeof window !== "undefined" && window.YT) {
-      if (!previewPlayer) {
-        try {
-          const player = new window.YT.Player("preview-player", {
-            videoId: activePreviewKey,
-            playerVars: {
-              autoplay: 1,
-              mute: 1,
-              controls: 0,
-              rel: 0,
-              modestbranding: 1,
-              showinfo: 0,
-              iv_load_policy: 3,
-              disablekb: 1,
-              playsinline: 1,
-            },
-            events: {
-              onReady: (event: { target: YouTubePlayer }) => {
-                try { event.target?.playVideo?.(); } catch { /* ignore */ }
-              },
-              onStateChange: (event: { data: number }) => {
-                // ended → back to poster
-                if (event.data === 0) {
-                  onPreviewEnded();
-                  return;
-                }
-                if (event.data === 2) {
-                  if (previewPauseTimeoutRef.current) clearTimeout(previewPauseTimeoutRef.current);
-                  previewPauseTimeoutRef.current = setTimeout(() => {
-                    try {
-                      const state = (player as YouTubePlayer)?.getPlayerState?.();
-                      if (state === 2) onPreviewEnded();
-                    } catch { /* ignore */ }
-                  }, 3000);
-                  return;
-                }
-                if (previewPauseTimeoutRef.current) {
-                  clearTimeout(previewPauseTimeoutRef.current);
-                  previewPauseTimeoutRef.current = null;
-                }
-              },
-            },
-          });
-          setPreviewPlayer(player);
-        } catch (error) {
-          logger.error("Error initializing preview player", error);
-        }
-      }
-    }
-    return () => {
-      if (previewPauseTimeoutRef.current) { clearTimeout(previewPauseTimeoutRef.current); previewPauseTimeoutRef.current = null; }
-      if (!isPreviewPlaying && previewPlayer?.destroy) {
-        previewPlayer.destroy();
-        setPreviewPlayer(null);
-      }
-    };
-  }, [isPreviewPlaying, activePreviewKey, ytReady, onPreviewEnded, previewPlayer, setPreviewPlayer]);
-
-  // Sync mute state to preview player
-  useEffect(() => {
-    if (!previewPlayer) return;
-    try {
-      if (isMuted) previewPlayer.mute();
-      else previewPlayer.unMute();
-    } catch { /* ignore */ }
-  }, [isMuted, previewPlayer]);
+  }, [isPlayingTrailer, activeTrailerKey, ytReady, onTrailerEnded, youtubePlayer, setYoutubePlayer]);
 
   return (
     <div className="absolute inset-0 z-0">
@@ -288,19 +221,28 @@ export function HeroBackground({
             transition={{ duration: 1.5, ease: "easeInOut" }}
           />
 
-          {/* Background muted preview (Netflix-style) */}
+          {/* Background streaming preview (Netflix-style) — uses selected server, no YouTube */}
           {isPreviewPlaying && (
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 1.2 }}
-              className="absolute inset-0 z-[1] bg-black"
+              className="absolute inset-0 z-[1] bg-black overflow-hidden"
+              onAnimationComplete={() => {
+                // End preview after 3 min max so carousel can advance
+                setTimeout(onPreviewEnded, 3 * 60 * 1000);
+              }}
             >
-              <div
-                id="preview-player"
+              <iframe
+                key={`preview-${media.id}-${selectedServer.id}`}
+                src={getPreviewUrl()}
                 className="w-full h-full"
-                style={{ pointerEvents: "none" }}
+                allow="autoplay; encrypted-media; picture-in-picture"
+                sandbox="allow-scripts allow-same-origin allow-forms allow-presentation"
+                referrerPolicy="no-referrer"
+                style={{ pointerEvents: "none", border: "none" }}
+                title={`Preview: ${media.title || media.name}`}
               />
             </motion.div>
           )}
@@ -309,7 +251,7 @@ export function HeroBackground({
           <div className="absolute inset-0 z-10 bg-gradient-to-t from-black/80 via-black/30 to-transparent pointer-events-none" />
           <div className="absolute inset-0 z-10 bg-gradient-to-r from-black/70 via-transparent to-transparent pointer-events-none" />
 
-          {/* Full-screen trailer player (user-triggered) */}
+          {/* Full-screen trailer player (user-triggered, YouTube) */}
           {isPlayingTrailer && (
             <motion.div
               initial={{ opacity: 0 }}

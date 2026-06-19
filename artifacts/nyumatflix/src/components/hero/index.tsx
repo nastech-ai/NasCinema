@@ -38,7 +38,6 @@ export function MediaDetailHero({
     isPreviewPlaying,
     isMuted,
     youtubePlayer,
-    previewPlayer,
     previewTrailerKey,
     currentItem,
     controls,
@@ -49,7 +48,6 @@ export function MediaDetailHero({
     handleToggleMute,
     handlePreviewEnded,
     setYoutubePlayer,
-    setPreviewPlayer,
   } = useMediaHero({ media, noSlide, isWatch, passedMediaType });
 
   return (
@@ -68,8 +66,6 @@ export function MediaDetailHero({
         onPreviewEnded={handlePreviewEnded}
         youtubePlayer={youtubePlayer}
         setYoutubePlayer={setYoutubePlayer}
-        previewPlayer={previewPlayer}
-        setPreviewPlayer={setPreviewPlayer}
         anilistId={anilistId}
         previewTrailerKey={previewTrailerKey}
       />
