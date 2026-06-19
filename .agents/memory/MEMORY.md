@@ -1,0 +1,1 @@
+- [NyumatFlix migration patterns](nyumatflix-migration.md) — key Next.js → Vite/wouter conversion rules applied during migration

@@ -38,7 +38,6 @@ export const AdblockerIcons = ({
                   alt="uBlock Origin"
                   width={24}
                   height={24}
-                  priority
                   className="w-6 h-6"
                 />
                 <img
@@ -46,7 +45,6 @@ export const AdblockerIcons = ({
                   alt="Firefox"
                   width={24}
                   height={24}
-                  priority
                   className="w-6 h-6"
                 />
               </span>
@@ -72,7 +70,6 @@ export const AdblockerIcons = ({
                   alt="AdGuard"
                   width={24}
                   height={24}
-                  priority
                   className="w-6 h-6"
                 />
                 <img
@@ -80,7 +77,6 @@ export const AdblockerIcons = ({
                   alt="Safari"
                   width={24}
                   height={24}
-                  priority
                   className="w-6 h-6"
                 />
               </span>
@@ -104,7 +100,6 @@ export const AdblockerIcons = ({
                   alt="uBlock Origin"
                   width={24}
                   height={24}
-                  priority
                   className="w-6 h-6"
                 />
                 <img
@@ -112,7 +107,6 @@ export const AdblockerIcons = ({
                   alt="Chrome"
                   width={24}
                   height={24}
-                  priority
                   className="w-6 h-6"
                 />
               </span>

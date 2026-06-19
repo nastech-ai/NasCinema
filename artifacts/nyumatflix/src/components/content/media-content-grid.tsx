@@ -1,3 +1,4 @@
+import { useLocation } from "wouter";
 
 import type { WatchlistItem } from "@/utils/watchlist-types";
 import type { EpisodeInfo } from "@/utils/watchlist-types";
@@ -111,7 +112,6 @@ function ListViewCard(props: {
     : undefined;
 
   const handleMouseEnter = () => {
-    router.prefetch(href);
   };
 
   return (
@@ -128,7 +128,7 @@ function ListViewCard(props: {
           <img
             src={backdropUrl}
             alt=""
-            layout="fill"
+            
             objectFit="cover"
             className="blur-sm scale-110"
           />
@@ -143,7 +143,7 @@ function ListViewCard(props: {
             <img
               src={posterUrl}
               alt={title || "Media poster"}
-              layout="fill"
+              
               objectFit="cover"
               className="transition-transform duration-700 group-hover:scale-[1.05]"
             />

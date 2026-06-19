@@ -1,3 +1,4 @@
+import { useLocation } from "wouter";
 
 import { cva, type VariantProps } from "class-variance-authority";
 
@@ -40,7 +41,6 @@ const Badge = React.forwardRef<HTMLDivElement, BadgeProps>(
 
     const handleMouseEnter = () => {
       if (href) {
-        router.prefetch(href);
       }
     };
 

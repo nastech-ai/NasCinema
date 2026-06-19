@@ -1,3 +1,4 @@
+import { useLocation } from "wouter";
 
 import { ScrollArea } from "@/components/ui/scroll-area";
 

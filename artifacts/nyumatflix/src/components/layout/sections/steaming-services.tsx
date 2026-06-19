@@ -1,3 +1,4 @@
+import { useLocation } from "wouter";
 
 import AdblockerAlert from "@/components/content/adblocker-alert";
 import { Button } from "@/components/ui/button";
@@ -55,8 +56,7 @@ export default function Sponsors() {
   const adBlockDetected = useDetectAdBlock();
 
   useLayoutEffect(() => {
-    router.prefetch("/search");
-  }, [router]);
+  }, []);
 
   const handleSearch = useCallback(() => {
     if (query.trim()) {
@@ -67,7 +67,7 @@ export default function Sponsors() {
 
       setAdblockAlertTrigger(true);
     }
-  }, [query, router, adBlockDetected]);
+  }, [query, adBlockDetected]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();

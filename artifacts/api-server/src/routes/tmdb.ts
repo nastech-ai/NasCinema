@@ -173,6 +173,16 @@ router.get("/tv/:id/season/:seasonNumber", async (req: Request, res: Response) =
   }
 });
 
+router.get("/person/:id", async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+    const data = await tmdbFetch(`/person/${id}`, { append_to_response: "combined_credits,images" });
+    return res.json(data);
+  } catch (e) {
+    return res.status(500).json({ error: "Failed to fetch person" });
+  }
+});
+
 router.get("/person-search", async (req: Request, res: Response) => {
   try {
     const query = req.query.query as string;

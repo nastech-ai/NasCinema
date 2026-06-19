@@ -1,3 +1,4 @@
+import { useLocation } from "wouter";
 
 import { Card, CardContent } from "@/components/ui/card";
 import { Icons } from "@/lib/icons";
@@ -65,7 +66,6 @@ export const MinimalMediaCard = ({ item }: { item: MediaItem }) => {
     : undefined;
 
   const handleMouseEnter = () => {
-    router.prefetch(href);
   };
   return (
     <Card
@@ -78,7 +78,6 @@ export const MinimalMediaCard = ({ item }: { item: MediaItem }) => {
           <img
             src={backdropUrl}
             alt=""
-            fill
             className="object-cover blur-[2px]"
           />
         </div>
@@ -162,7 +161,6 @@ export const MediaCard = ({
   })();
 
   const handleMouseEnter = () => {
-    router.prefetch(href);
   };
 
   const handleStatusChange = (newStatus: string) => {
@@ -194,7 +192,6 @@ export const MediaCard = ({
           <img
             src={backdropUrl}
             alt=""
-            fill
             className="object-cover blur-[2px]"
           />
         </div>

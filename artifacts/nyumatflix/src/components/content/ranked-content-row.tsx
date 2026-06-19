@@ -1,3 +1,4 @@
+import { useLocation } from "wouter";
 
 import {
   Carousel,
@@ -54,7 +55,6 @@ export function RankedContentRow({
 
   const handleItemMouseEnter = (item: MediaItem) => {
     const itemHref = `/${isMovie(item) ? "movies" : "tvshows"}/${item.id}`;
-    router.prefetch(itemHref);
   };
 
   const LandscapeCard = ({ item, rank }: { item: MediaItem; rank: number }) => {
@@ -82,7 +82,6 @@ export function RankedContentRow({
           <img
             src={backdropUrl}
             alt={displayTitle || "Backdrop"}
-            fill
             className="object-cover transition-transform duration-500 group-hover:scale-105"
             sizes="(max-width: 768px) 100vw, 50vw"
           />

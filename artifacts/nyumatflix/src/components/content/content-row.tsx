@@ -23,20 +23,16 @@ const LoadingRow = () => (
   </div>
 );
 
-const StandardContentRow = lazy(
-  () => import("./standard-content-row").then((m) => m.StandardContentRow),
-  { ssr: false, loading: LoadingRow },
+const StandardContentRow = lazy(() =>
+  import("./standard-content-row").then((m) => ({ default: m.StandardContentRow })),
 );
 
-const RankedContentRow = lazy(
-  () => import("./ranked-content-row").then((m) => m.RankedContentRow),
-  { ssr: false, loading: LoadingRow },
+const RankedContentRow = lazy(() =>
+  import("./ranked-content-row").then((m) => ({ default: m.RankedContentRow })),
 );
 
-const VirtualizedContentRow = lazy(
-  () =>
-    import("./virtualized-content-row").then((m) => m.VirtualizedContentRow),
-  { ssr: false, loading: LoadingRow },
+const VirtualizedContentRow = lazy(() =>
+  import("./virtualized-content-row").then((m) => ({ default: m.VirtualizedContentRow })),
 );
 
 /**

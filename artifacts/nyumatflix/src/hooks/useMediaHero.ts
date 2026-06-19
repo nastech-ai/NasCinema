@@ -4,7 +4,7 @@ import { useEpisodeStore } from "@/lib/stores/episode-store";
 import type { MediaItem } from "@/utils/typings";
 import { getFirstRegularSeason, isTVShow } from "@/utils/typings";
 import { LegacyAnimationControls, useAnimation } from "framer-motion";
-import { useLocation, useRouter, useSearch } from "wouter";
+import { useLocation, useSearch } from "wouter";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 export interface UseMediaHeroState {
@@ -55,9 +55,9 @@ export const useMediaHero = ({
   const controls = useAnimation();
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  const [, navigate] = useLocation();
-  const searchParams = useSearchParams();
-  const [pathname] = useLocation();
+  const [pathname, navigate] = useLocation();
+  const searchStr = useSearch();
+  const searchParams = new URLSearchParams(searchStr);
 
   const handleNext = useCallback(() => {
     setCurrentItemIndex((prevIndex) =>
@@ -131,9 +131,7 @@ export const useMediaHero = ({
         const params = new URLSearchParams(searchParams.toString());
         params.delete("autoplay");
         const newSearch = params.toString();
-        router.replace(`${pathname}${newSearch ? `?${newSearch}` : ""}`, {
-          scroll: false,
-        });
+        navigate(`${pathname}${newSearch ? `?${newSearch}` : ""}`);
       }, 500);
     };
 
@@ -142,9 +140,8 @@ export const useMediaHero = ({
       if (timer) clearTimeout(timer);
     };
   }, [
-    searchParams,
+    searchStr,
     isWatch,
-    router,
     pathname,
     passedMediaType,
     currentItem,

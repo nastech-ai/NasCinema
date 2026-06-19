@@ -1,7 +1,7 @@
 
 import { cn } from "@/lib/utils";
 import { ChevronLeft } from "lucide-react";
-import { useLocation, useRouter } from "wouter";
+import { useLocation } from "wouter";
 
 interface BackButtonProps {
   className?: string;
@@ -27,15 +27,12 @@ export function BackButton({
 
   const handleBack = () => {
     if (typeof window !== "undefined" && window.history.length > 1) {
-      router.back();
+      window.history.back();
     } else {
       navigate(fallbackUrl);
     }
   };
 
-  const handleMouseEnter = () => {
-    router.prefetch(fallbackUrl);
-  };
 
   // hide on top-level routes
   if (HIDE_BACK_BUTTON_ROUTES.includes(pathname)) {

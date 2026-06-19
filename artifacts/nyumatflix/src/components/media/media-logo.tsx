@@ -164,15 +164,12 @@ export function MediaLogo({
           <img
             src={`https://image.tmdb.org/t/p/w500${logo.file_path}`}
             alt={title || "Logo"}
-            fill
             className={cn(
               "object-contain",
               align === "left" && "object-left",
               align === "center" && "object-center",
               align === "right" && "object-right",
             )}
-            sizes={imageSizes}
-            priority={false}
           />
         </div>
       </div>

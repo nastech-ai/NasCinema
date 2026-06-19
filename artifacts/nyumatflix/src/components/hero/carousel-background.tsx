@@ -26,7 +26,6 @@ export function BackgroundImage({
         width={1920}
         height={1080}
         className={`${isFullPage ? "" : "rounded-lg"} object-cover w-full h-full`}
-        priority
       />
       <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/70 via-black/50 to-transparent opacity-70" />
       <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-black/70 via-black/50 to-transparent opacity-70" />
@@ -53,7 +52,6 @@ export function BackgroundImage({
                     width={400}
                     height={200}
                     className="max-w-full h-auto"
-                    priority
                   />
                 </div>
               ) : (

@@ -1,3 +1,4 @@
+import { useLocation } from "wouter";
 
 import { User } from "lucide-react";
 
@@ -50,7 +51,6 @@ export function CastCarousel({ cast }: CastCarouselProps) {
   if (!cast.length) return null;
 
   const handlePersonMouseEnter = (person: Actor) => {
-    router.prefetch(`/person/${person.id}`);
   };
 
   return (
@@ -198,7 +198,6 @@ export function RecommendationsCarousel({
 
   const handleItemMouseEnter = (item: Movie | TvShow) => {
     const href = getHref(item);
-    router.prefetch(href);
   };
 
   const sectionTitle = mediaType === "movie" ? "Similar Movies" : "Recommended";

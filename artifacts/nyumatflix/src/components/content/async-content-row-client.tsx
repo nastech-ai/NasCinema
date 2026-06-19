@@ -1,6 +1,10 @@
 
 import { lazy } from "react";
 
-export const DynamicAsyncContentRow = lazy(
-  () => import("./async-content-row").then((m) => m.AsyncContentRow),
+const AsyncContentRowLazy = lazy(() =>
+  import("./async-content-row").then((m) => ({
+    default: m.AsyncContentRow,
+  })),
 );
+
+export const DynamicAsyncContentRow = AsyncContentRowLazy;

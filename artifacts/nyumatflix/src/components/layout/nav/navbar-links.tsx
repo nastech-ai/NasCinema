@@ -1,7 +1,7 @@
 
 import { cn } from "@/lib/utils";
 import { Link } from "wouter";
-import { useLocation, useRouter } from "wouter";
+import { useLocation } from "wouter";
 import { useEffect, useState } from "react";
 
 interface NavLink {
@@ -50,24 +50,14 @@ export const NavbarLinks = ({
     : "text-white/80 hover:text-white font-medium drop-shadow-md hover:drop-shadow-lg";
 
   const handleLinkInteraction = (link: NavLink) => {
-    router.prefetch(link.href);
     if (link.href === "/movies") {
-      router.prefetch("/movies/browse");
-      router.prefetch("/home");
     } else if (link.href === "/tvshows") {
-      router.prefetch("/tvshows/browse");
-      router.prefetch("/home");
     } else if (link.href === "/home") {
-      router.prefetch("/movies");
-      router.prefetch("/tvshows");
     } else if (link.href === "/search") {
-      router.prefetch("/movies");
-      router.prefetch("/tvshows");
     }
   };
 
   const handleMouseEnter = (link: NavLink) => {
-    router.prefetch(link.href);
   };
 
   return (

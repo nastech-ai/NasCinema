@@ -1,3 +1,4 @@
+import { useLocation } from "wouter";
 
 import { MultiSelect } from "@/components/multi-select";
 import { PeopleInfiniteScroll } from "@/components/search/people-inf-scroll";
@@ -111,7 +112,6 @@ function SearchResultCard({ item }: { item: MediaItem }) {
     : undefined;
 
   const handleMouseEnter = () => {
-    router.prefetch(href);
   };
 
   return (
@@ -128,7 +128,7 @@ function SearchResultCard({ item }: { item: MediaItem }) {
           <img
             src={backdropUrl}
             alt={title || "Media backdrop"}
-            layout="fill"
+            
             objectFit="cover"
             className="blur-sm scale-110"
           />

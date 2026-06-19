@@ -5,7 +5,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useSearchPreview } from "@/hooks/use-search-preview";
 import { cn } from "@/lib/utils";
 import { ArrowRight, Search } from "lucide-react";
-import { useRouter, useSearch } from "wouter";
+import { useLocation, useSearch } from "wouter";
 import { forwardRef, useCallback, useEffect, useRef, useState } from "react";
 import { Poster } from "../media/media-poster";
 import SearchResults from "./search-results";
@@ -27,7 +27,7 @@ export function SearchComponent({ onSearch }: SearchComponentProps = {}) {
         navigate(`/search?q=${encodeURIComponent(searchQuery.trim())}`);
       }
     },
-    [onSearch, router],
+    [onSearch],
   );
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -115,7 +115,8 @@ export function SearchComponent({ onSearch }: SearchComponentProps = {}) {
 }
 
 export function SearchPageClient() {
-  const searchParams = useSearchParams();
+  const searchStr = useSearch();
+  const searchParams = new URLSearchParams(searchStr);
   const urlQuery = searchParams.get("q") || "";
 
   const [query, setQuery] = useState(urlQuery);
@@ -124,10 +125,10 @@ export function SearchPageClient() {
   const [, navigate] = useLocation();
 
   useEffect(() => {
-    const newQuery = searchParams.get("q") || "";
+    const newQuery = new URLSearchParams(searchStr).get("q") || "";
     setQuery(newQuery);
     setSearchQuery(newQuery);
-  }, [searchParams]);
+  }, [searchStr]);
 
   const handleSearch = useCallback(() => {
     if (query.trim()) {
@@ -135,7 +136,7 @@ export function SearchPageClient() {
       setSearchQuery(trimmedQuery);
       navigate(`/search?q=${encodeURIComponent(trimmedQuery)}`);
     }
-  }, [query, router]);
+  }, [query]);
 
   useEffect(() => {
     const handleGlobalKeyDown = (e: KeyboardEvent) => {
@@ -218,7 +219,7 @@ export const NavbarSearchClient = forwardRef<
       navigate(`/search?q=${encodeURIComponent(query.trim())}`);
       setShowPreview(false);
     }
-  }, [query, router]);
+  }, [query]);
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -263,7 +264,7 @@ export const NavbarSearchClient = forwardRef<
 
     document.addEventListener("keydown", handleKeyDown);
     return () => document.removeEventListener("keydown", handleKeyDown);
-  }, [showPreview, results, selectedIndex, handleSearch, router, inputRef]);
+  }, [showPreview, results, selectedIndex, handleSearch, inputRef]);
 
   useEffect(() => {
     // don't auto-select first result, keep selectedIndex at -1 (no selection)
@@ -400,7 +401,6 @@ export const NavbarSearchClient = forwardRef<
                             setShowPreview(false);
                           }}
                           onMouseEnter={() => {
-                            router.prefetch(href);
                           }}
                           className={`flex items-center gap-2 p-2 cursor-pointer transition-all duration-150 hover:bg-accent/50 ${
                             index === selectedIndex ? "bg-accent/80" : ""

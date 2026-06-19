@@ -47,7 +47,7 @@ export function MediaDetailHero({
 
   return (
     <div className={`relative ${isWatch ? "h-[75vh]" : "h-[82vh]"}`}>
-      <Script src="https://www.youtube.com/iframe_api" strategy="lazyOnload" />
+      
 
       <HeroBackground
         media={currentItem as MediaItem}

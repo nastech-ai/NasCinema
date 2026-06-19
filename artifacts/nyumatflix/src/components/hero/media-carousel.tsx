@@ -104,7 +104,6 @@ export function MediaCarousel({ items }: MediaCarouselProps) {
                       .otherwise(() => "Media Item")}
                     width={1920}
                     height={1080}
-                    priority={index <= 2}
                     className="object-cover brightness-[0.3] z-50 w-full h-full"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />

@@ -27,7 +27,7 @@ export function ContentCard({
   rating,
   href,
 }: ContentCardProps) {
-
+  const [, navigate] = useLocation();
 
   const movie = isMovie(item) ? (item as Movie) : null;
   const show = isTVShow(item) ? (item as TvShow) : null;
@@ -41,7 +41,7 @@ export function ContentCard({
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === "Enter" || e.key === " ") {
       e.preventDefault();
-      navigate();
+      navigate(link);
     }
   };
 
@@ -54,7 +54,7 @@ export function ContentCard({
       <Card
         className="group relative flex items-center gap-4 p-3 bg-card/40 backdrop-blur-md border border-white/10 hover:border-primary/50 transition-all duration-300 shadow-xl cursor-pointer overflow-hidden"
         aria-label={`Rank ${rank}: ${title}`}
-        onClick={navigate}
+        onClick={() => navigate(link)}
         
       >
         {backdropUrl && (
@@ -62,7 +62,6 @@ export function ContentCard({
             <img
               src={backdropUrl}
               alt=""
-              fill
               className="object-cover blur-[2px]"
             />
           </div>
@@ -139,7 +138,7 @@ export function ContentCard({
   return (
     <Card
       className="group relative overflow-hidden bg-card/40 backdrop-blur-md border border-white/10 hover:border-primary/50 transition-all duration-300 shadow-xl cursor-pointer h-full flex flex-col md:aspect-[2/3]"
-      onClick={navigate}
+      onClick={() => navigate(link)}
       
       onKeyDown={handleKeyDown}
       tabIndex={0}
@@ -151,7 +150,6 @@ export function ContentCard({
           <img
             src={backdropUrl}
             alt=""
-            fill
             className="object-cover blur-[2px]"
           />
         </div>

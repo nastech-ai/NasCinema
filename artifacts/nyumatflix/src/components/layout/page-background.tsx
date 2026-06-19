@@ -22,7 +22,6 @@ export function PageBackground({
         width={1920}
         height={1080}
         className="object-cover w-full h-full"
-        priority
       />
       {/* darkening overlays from all directions */}
       <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/70 via-black/50 to-transparent opacity-70" />

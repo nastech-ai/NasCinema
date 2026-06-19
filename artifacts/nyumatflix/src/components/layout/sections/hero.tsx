@@ -18,9 +18,8 @@ import { Link } from "wouter";
 import { useCallback, useState } from "react";
 import StreamingServices from "./steaming-services";
 
-const NeuralNetworkBackground = lazy(
-  () => import("@/components/ui/neural-network-hero"),
-  { ssr: false, loading: () => <div className="w-full h-full bg-black" /> },
+const NeuralNetworkBackground = lazy(() =>
+  import("@/components/ui/neural-network-hero"),
 );
 
 export const HeroSection = () => {
@@ -31,9 +30,6 @@ export const HeroSection = () => {
   const adBlockDetected = useDetectAdBlock();
 
   const handleStartWatchingClick = useCallback(() => {
-    router.prefetch("/home");
-    router.prefetch("/movies");
-    router.prefetch("/tvshows");
 
     if (adBlockDetected) {
       navigate("/home");
@@ -41,7 +37,7 @@ export const HeroSection = () => {
     }
 
     setAdblockAlertTrigger(true);
-  }, [adBlockDetected, router]);
+  }, [adBlockDetected]);
 
   return (
     <section className="relative w-full min-h-[100vh] md:min-h-screen overflow-x-hidden">
@@ -93,7 +89,6 @@ export const HeroSection = () => {
                 variant="stylish"
                 onClick={handleStartWatchingClick}
                 onMouseEnter={() => {
-                  router.prefetch("/home");
                 }}
                 data-testid="hero-start-watching-button"
               >
@@ -143,7 +138,6 @@ export const HeroSection = () => {
                     height={1680}
                     className="pointer-events-none select-none object-cover w-full h-auto"
                     src="/mobile.webp"
-                    priority
                     alt="NyumatFlix on Mobile"
                   />
                 </div>
@@ -152,7 +146,6 @@ export const HeroSection = () => {
                     width={1920}
                     height={1080}
                     className="pointer-events-none select-none object-cover w-full h-auto"
-                    priority
                     src="/preview.webp"
                     alt="NyumatFlix Platform"
                   />

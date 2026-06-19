@@ -1,3 +1,4 @@
+import { useLocation } from "wouter";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -70,7 +71,7 @@ export const CarouselDetails = React.memo(function CarouselDetails({
     () => () => {
       navigate(`${href}?autoplay=true`);
     },
-    [router, href],
+    [navigate, href],
   );
 
   useEffect(() => {
