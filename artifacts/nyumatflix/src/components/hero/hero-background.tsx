@@ -240,8 +240,7 @@ export function HeroBackground({
                 src={getPreviewUrl()}
                 className="w-full h-full"
                 allow="autoplay; encrypted-media; picture-in-picture"
-                sandbox="allow-scripts allow-same-origin allow-forms allow-presentation"
-                referrerPolicy="no-referrer"
+                sandbox="allow-scripts allow-same-origin allow-forms allow-presentation allow-popups"
                 style={{ pointerEvents: "none", border: "none" }}
                 title={`Preview: ${media.title || media.name}`}
               />
@@ -296,8 +295,7 @@ export function HeroBackground({
                       src={videoSrc}
                       className="w-full h-full rounded-lg overflow-hidden shadow-2xl border border-border/20"
                       allow="autoplay; encrypted-media; picture-in-picture; fullscreen"
-                      sandbox="allow-scripts allow-same-origin allow-forms allow-presentation allow-pointer-lock allow-downloads"
-                      referrerPolicy="no-referrer"
+                      sandbox="allow-scripts allow-same-origin allow-forms allow-presentation allow-pointer-lock allow-downloads allow-popups allow-popups-to-escape-sandbox"
                       allowFullScreen
                     />
                   );

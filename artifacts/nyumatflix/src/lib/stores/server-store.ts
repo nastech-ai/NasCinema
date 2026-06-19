@@ -31,37 +31,36 @@ export interface ServerOverride {
   isAvailable: boolean;
   reason?: string; // Optional reason for the override (e.g., "Server down", "Maintenance")
 }
-// Old -> vidsrc.xyz
-// New: vidsrc-embed.ru - vidsrc-embed.su - vidsrcme.su - vsrc.su
+// Active servers as of June 2026 (tested for iframe embed compatibility)
 export const videoServers: VideoServer[] = [
   {
     id: "vidsrc",
     name: "VidSrc",
-    baseUrl: "https://vsrc.su",
-    getMovieUrl: (tmdbId) => `https://vsrc.su/embed/movie?tmdb=${tmdbId}`,
-    getTvUrl: (tmdbId) => `https://vsrc.su/embed/tv?tmdb=${tmdbId}`,
+    baseUrl: "https://vsembed.ru",
+    getMovieUrl: (tmdbId) => `https://vsembed.ru/embed/movie?tmdb=${tmdbId}`,
+    getTvUrl: (tmdbId) => `https://vsembed.ru/embed/tv?tmdb=${tmdbId}`,
     getEpisodeUrl: (tmdbId, season, episode) =>
-      `https://vsrc.su/embed/tv?tmdb=${tmdbId}&season=${season}&episode=${episode}`,
+      `https://vsembed.ru/embed/tv?tmdb=${tmdbId}&season=${season}&episode=${episode}`,
   },
   {
     id: "superembed",
-    name: "SuperEmbed",
-    baseUrl: "https://multiembed.mov",
+    name: "VidSrc.me",
+    baseUrl: "https://vidsrc.me",
     getMovieUrl: (tmdbId) =>
-      `https://multiembed.mov/?video_id=${tmdbId}&tmdb=1`,
-    getTvUrl: (tmdbId) => `https://multiembed.mov/?video_id=${tmdbId}&tmdb=1`,
+      `https://vidsrc.me/embed/movie?tmdb=${tmdbId}`,
+    getTvUrl: (tmdbId) => `https://vidsrc.me/embed/tv?tmdb=${tmdbId}`,
     getEpisodeUrl: (tmdbId, season, episode) =>
-      `https://multiembed.mov/?video_id=${tmdbId}&tmdb=1&s=${season}&e=${episode}`,
+      `https://vidsrc.me/embed/tv?tmdb=${tmdbId}&season=${season}&episode=${episode}`,
   },
   {
     id: "autoembed",
-    name: "AutoEmbed",
-    baseUrl: "https://player.autoembed.cc",
+    name: "2Embed",
+    baseUrl: "https://www.2embed.cc",
     getMovieUrl: (tmdbId) =>
-      `https://player.autoembed.cc/embed/movie/${tmdbId}`,
-    getTvUrl: (tmdbId) => `https://player.autoembed.cc/embed/tv/${tmdbId}`,
+      `https://www.2embed.cc/embed/${tmdbId}`,
+    getTvUrl: (tmdbId) => `https://www.2embed.cc/embedtv/${tmdbId}`,
     getEpisodeUrl: (tmdbId, season, episode) =>
-      `https://player.autoembed.cc/embed/tv/${tmdbId}/${season}/${episode}`,
+      `https://www.2embed.cc/embedtv/${tmdbId}?s=${season}&e=${episode}`,
   },
   {
     id: "111movies",
