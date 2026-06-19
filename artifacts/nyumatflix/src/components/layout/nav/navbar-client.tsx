@@ -22,6 +22,7 @@ const NAV_LINKS_WITH_HOME: NavLink[] = [
   { label: "Movies", href: "/movies" },
   { label: "TV Shows", href: "/tvshows" },
   { label: "Search", href: "/search" },
+  { label: "Settings", href: "/settings" },
 ];
 
 const getNavLinks = (session: unknown): NavLink[] => {

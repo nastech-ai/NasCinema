@@ -50,7 +50,7 @@ export const Poster = ({
   objectFit = "cover",
 }: PosterProps) => {
   const imageUrl = useMemo(() => {
-    if (!posterPath) return "/placeholder-poster.jpg";
+    if (!posterPath) return null;
 
     if (size === "small") {
       return `https://image.tmdb.org/t/p/w154${posterPath}`;
@@ -91,14 +91,21 @@ export const Poster = ({
         className,
       )}
     >
-      <img
-        src={imageUrl}
-        alt={alt}
-        className={cn(
-          objectFit === "cover" ? "object-cover" : "object-contain",
-          "transition-transform duration-300",
-        )}
-      />
+      {imageUrl ? (
+        <img
+          src={imageUrl}
+          alt={alt}
+          className={cn(
+            "w-full h-full",
+            objectFit === "cover" ? "object-cover" : "object-contain",
+            "transition-transform duration-300",
+          )}
+        />
+      ) : (
+        <div className="w-full h-full bg-white/5 flex items-center justify-center">
+          <span className="text-white/20 text-xs text-center px-2">{alt}</span>
+        </div>
+      )}
     </div>
   );
 };

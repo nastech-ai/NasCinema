@@ -13,7 +13,7 @@ import { useDetectAdBlock } from "adblock-detect-react";
 import { ArrowRight, User } from "lucide-react";
 import { lazy } from "react";
 
-import { Link } from "wouter";
+import { Link, useLocation } from "wouter";
 
 import { useCallback, useState } from "react";
 import StreamingServices from "./steaming-services";

@@ -215,7 +215,7 @@ export function ServerSelector({
       const isCurrentAvailable =
         !isCurrentManuallyUnavailable &&
         currentServerData &&
-        (currentServerData[detectedMediaType]?.includes(media.id) ||
+        (currentServerData[detectedMediaType === "movie" ? "movies" : "tv"]?.includes(media.id) ||
           (!selectedServer.checkAvailability &&
             !selectedServer.checkIndividualAvailability));
 
@@ -261,7 +261,7 @@ export function ServerSelector({
     if (!serverData || serverData.isLoading) return null;
 
     const detectedMediaType = getMediaType();
-    const contentArray = serverData[detectedMediaType];
+    const contentArray = serverData[detectedMediaType === "movie" ? "movies" : "tv"];
 
     if (!contentArray || !Array.isArray(contentArray)) return null;
 

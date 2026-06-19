@@ -208,7 +208,7 @@ export const useServerStore = create<ServerState>()(
           const currentServerData = availabilityData[currentServer.id];
           if (currentServerData && !currentServerData.isLoading) {
             const isCurrentAvailable =
-              currentServerData[type]?.includes(tmdbId);
+              currentServerData[type === "movie" ? "movies" : "tv"]?.includes(tmdbId);
             if (isCurrentAvailable) {
               return currentServer;
             }
@@ -234,7 +234,7 @@ export const useServerStore = create<ServerState>()(
             return server;
           }
 
-          if (serverData[type]?.includes(tmdbId)) {
+          if (serverData[type === "movie" ? "movies" : "tv"]?.includes(tmdbId)) {
             return server;
           }
         }

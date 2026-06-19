@@ -11,7 +11,10 @@ export interface UseMediaHeroState {
   currentItemIndex: number;
   isPlayingVideo: boolean;
   isPlayingTrailer: boolean;
+  isPreviewPlaying: boolean;
+  isMuted: boolean;
   youtubePlayer: YouTubePlayer;
+  previewPlayer: YouTubePlayer;
   historyLength: number;
 }
 
@@ -26,7 +29,10 @@ export interface UseMediaHeroActions {
   handleWatch: () => void;
   handlePlayTrailer: () => void;
   handleTrailerEnded: () => void;
+  handleToggleMute: () => void;
+  handlePreviewEnded: () => void;
   setYoutubePlayer: (player: YouTubePlayer) => void;
+  setPreviewPlayer: (player: YouTubePlayer) => void;
 }
 
 export interface UseMediaHeroOptions {
@@ -41,6 +47,18 @@ export interface UseMediaHeroReturn
     UseMediaHeroComputed,
     UseMediaHeroActions {}
 
+function getVideosFromItem(item: MediaItem | undefined): { type: string; key: string }[] {
+  if (!item?.videos) return [];
+  if (Array.isArray(item.videos)) return item.videos as { type: string; key: string }[];
+  const obj = item.videos as { results?: unknown };
+  if (Array.isArray(obj.results)) return obj.results as { type: string; key: string }[];
+  return [];
+}
+
+const ACCEPTABLE_VIDEO_TYPES = ["Trailer", "Teaser", "Clip", "Featurette"];
+// How long to wait before auto-starting muted preview (ms)
+const PREVIEW_DELAY_MS = 5000;
+
 export const useMediaHero = ({
   media,
   noSlide,
@@ -50,14 +68,32 @@ export const useMediaHero = ({
   const [currentItemIndex, setCurrentItemIndex] = useState<number>(0);
   const [isPlayingVideo, setIsPlayingVideo] = useState<boolean>(false);
   const [isPlayingTrailer, setIsPlayingTrailer] = useState<boolean>(false);
+  const [isPreviewPlaying, setIsPreviewPlaying] = useState<boolean>(false);
+  const [isMuted, setIsMuted] = useState<boolean>(true);
   const [youtubePlayer, setYoutubePlayer] = useState<YouTubePlayer>(null);
+  const [previewPlayer, setPreviewPlayer] = useState<YouTubePlayer>(null);
   const [historyLength, setHistoryLength] = useState<number>(2);
   const controls = useAnimation();
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const previewTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const [pathname, navigate] = useLocation();
   const searchStr = useSearch();
   const searchParams = new URLSearchParams(searchStr);
+
+  // Clear preview when slide changes
+  const clearPreview = useCallback((player?: YouTubePlayer) => {
+    setIsPreviewPlaying(false);
+    setIsMuted(true);
+    if (player) {
+      try { player.destroy(); } catch { /* ignore */ }
+    }
+    setPreviewPlayer(null);
+    if (previewTimerRef.current) {
+      clearTimeout(previewTimerRef.current);
+      previewTimerRef.current = null;
+    }
+  }, []);
 
   const handleNext = useCallback(() => {
     setCurrentItemIndex((prevIndex) =>
@@ -65,7 +101,8 @@ export const useMediaHero = ({
     );
     setIsPlayingVideo(false);
     setIsPlayingTrailer(false);
-  }, [media.length]);
+    clearPreview();
+  }, [media.length, clearPreview]);
 
   useEffect(() => {
     const ref = timeoutRef.current;
@@ -74,24 +111,48 @@ export const useMediaHero = ({
     };
   }, []);
 
+  // Auto-advance carousel (paused when anything is playing)
   useEffect(() => {
-    if (!isPlayingVideo && !noSlide && !isWatch && !isPlayingTrailer) {
+    if (!isPlayingVideo && !noSlide && !isWatch && !isPlayingTrailer && !isPreviewPlaying) {
       const interval = setInterval(() => {
         handleNext();
       }, 7000);
       return () => clearInterval(interval);
     }
-  }, [isPlayingVideo, noSlide, isWatch, isPlayingTrailer, handleNext]);
+  }, [isPlayingVideo, noSlide, isWatch, isPlayingTrailer, isPreviewPlaying, handleNext]);
 
   const currentItem = useMemo(
     () => media[currentItemIndex],
     [media, currentItemIndex],
   );
 
+  // Auto-start muted preview after delay (only on non-watch carousel pages)
+  useEffect(() => {
+    if (isWatch || noSlide || isPlayingVideo || isPlayingTrailer) return;
+
+    // Check current item has a trailer
+    const videos = getVideosFromItem(currentItem);
+    const trailer = videos.find((v) => ACCEPTABLE_VIDEO_TYPES.includes(v.type));
+    if (!trailer?.key) return;
+
+    previewTimerRef.current = setTimeout(() => {
+      setIsPreviewPlaying(true);
+      setIsMuted(true);
+    }, PREVIEW_DELAY_MS);
+
+    return () => {
+      if (previewTimerRef.current) {
+        clearTimeout(previewTimerRef.current);
+        previewTimerRef.current = null;
+      }
+    };
+  }, [currentItemIndex, isWatch, noSlide, isPlayingVideo, isPlayingTrailer]);
+
   const handleWatch = useCallback(() => {
     setIsPlayingTrailer(false);
+    clearPreview(previewPlayer ?? undefined);
     setIsPlayingVideo(true);
-  }, []);
+  }, [clearPreview, previewPlayer]);
 
   useEffect(() => {
     const shouldAutoplay = searchParams.get("autoplay") === "true";
@@ -149,37 +210,42 @@ export const useMediaHero = ({
   ]);
 
   const handlePlayTrailer = useCallback(() => {
-    let currentItemVideos: { type: string; key: string }[] = [];
-    if (currentItem?.videos) {
-      if (Array.isArray(currentItem.videos)) {
-        currentItemVideos = currentItem.videos as {
-          type: string;
-          key: string;
-        }[];
-      } else if (
-        typeof currentItem.videos === "object" &&
-        currentItem.videos !== null
-      ) {
-        const videosObj = currentItem.videos as { results?: unknown };
-        if (Array.isArray(videosObj.results)) {
-          currentItemVideos = videosObj.results as {
-            type: string;
-            key: string;
-          }[];
-        }
-      }
-    }
-    const acceptableVideoTypes = ["Trailer", "Teaser", "Clip", "Featurette"];
-    const trailerVideo = currentItemVideos.find((v) =>
-      acceptableVideoTypes.includes(v.type),
-    );
+    const videos = getVideosFromItem(currentItem);
+    const trailerVideo = videos.find((v) => ACCEPTABLE_VIDEO_TYPES.includes(v.type));
 
     if (!trailerVideo?.key) {
       return;
     }
 
+    // Stop preview when playing full trailer
+    clearPreview(previewPlayer ?? undefined);
     setIsPlayingTrailer(true);
-  }, [currentItem]);
+  }, [currentItem, clearPreview, previewPlayer]);
+
+  const handleTrailerEnded = useCallback(() => {
+    setIsPlayingTrailer(false);
+    setIsPlayingVideo(false);
+    setIsPreviewPlaying(false);
+  }, []);
+
+  const handlePreviewEnded = useCallback(() => {
+    setIsPreviewPlaying(false);
+    setIsMuted(true);
+    setPreviewPlayer(null);
+  }, []);
+
+  const handleToggleMute = useCallback(() => {
+    setIsMuted((prev) => {
+      const next = !prev;
+      if (previewPlayer) {
+        try {
+          if (next) previewPlayer.mute();
+          else previewPlayer.unMute();
+        } catch { /* ignore */ }
+      }
+      return next;
+    });
+  }, [previewPlayer]);
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -204,7 +270,10 @@ export const useMediaHero = ({
     currentItemIndex,
     isPlayingVideo,
     isPlayingTrailer,
+    isPreviewPlaying,
+    isMuted,
     youtubePlayer,
+    previewPlayer,
     historyLength,
     currentItem,
     controls,
@@ -212,11 +281,11 @@ export const useMediaHero = ({
     handleNext,
     handleWatch,
     handlePlayTrailer,
-    handleTrailerEnded: () => {
-      setIsPlayingTrailer(false);
-      setIsPlayingVideo(false);
-    },
+    handleTrailerEnded,
+    handleToggleMute,
+    handlePreviewEnded,
     setYoutubePlayer,
+    setPreviewPlayer,
   };
 };
 

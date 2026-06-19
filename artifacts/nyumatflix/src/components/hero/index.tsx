@@ -35,14 +35,20 @@ export function MediaDetailHero({
     currentItemIndex,
     isPlayingVideo,
     isPlayingTrailer,
+    isPreviewPlaying,
+    isMuted,
     youtubePlayer,
+    previewPlayer,
     currentItem,
     controls,
     mediaType,
     handleWatch,
     handlePlayTrailer,
     handleTrailerEnded,
+    handleToggleMute,
+    handlePreviewEnded,
     setYoutubePlayer,
+    setPreviewPlayer,
   } = useMediaHero({ media, noSlide, isWatch, passedMediaType });
 
   return (
@@ -54,10 +60,15 @@ export function MediaDetailHero({
         mediaType={mediaType}
         isPlayingVideo={isPlayingVideo}
         isPlayingTrailer={isPlayingTrailer}
+        isPreviewPlaying={isPreviewPlaying}
+        isMuted={isMuted}
         controls={controls}
         onTrailerEnded={handleTrailerEnded}
+        onPreviewEnded={handlePreviewEnded}
         youtubePlayer={youtubePlayer}
         setYoutubePlayer={setYoutubePlayer}
+        previewPlayer={previewPlayer}
+        setPreviewPlayer={setPreviewPlayer}
         anilistId={anilistId}
       />
 
@@ -67,6 +78,8 @@ export function MediaDetailHero({
         isWatch={isWatch}
         isPlayingVideo={isPlayingVideo}
         isPlayingTrailer={isPlayingTrailer}
+        isPreviewPlaying={isPreviewPlaying}
+        isMuted={isMuted}
         handleWatch={handleWatch}
         handlePlayTrailer={() => {
           const before = isPlayingTrailer;
@@ -76,6 +89,7 @@ export function MediaDetailHero({
           }
         }}
         handleTrailerEnded={handleTrailerEnded}
+        handleToggleMute={handleToggleMute}
         youtubePlayer={youtubePlayer}
         setYoutubePlayer={setYoutubePlayer}
         isUpcoming={isUpcoming}

@@ -1,3 +1,15 @@
+export interface YouTubePlayerInstance {
+  destroy: () => void;
+  getPlayerState?: () => number;
+  mute: () => void;
+  unMute: () => void;
+  playVideo: () => void;
+  pauseVideo: () => void;
+  stopVideo: () => void;
+  setVolume: (volume: number) => void;
+  isMuted: () => boolean;
+}
+
 // Declare YouTube API types
 declare global {
   interface Window {
@@ -10,23 +22,23 @@ declare global {
             autoplay?: number;
             controls?: number;
             rel?: number;
+            mute?: number;
+            modestbranding?: number;
+            showinfo?: number;
+            iv_load_policy?: number;
+            disablekb?: number;
+            playsinline?: number;
           };
           events?: {
             onStateChange?: (event: { data: number }) => void;
-            onReady?: (event: { target: unknown }) => void;
+            onReady?: (event: { target: YouTubePlayerInstance }) => void;
           };
         },
-      ) => {
-        destroy: () => void;
-        getPlayerState?: () => number;
-      };
+      ) => YouTubePlayerInstance;
     };
     onYouTubeIframeAPIReady: () => void;
   }
 }
 
-// Type for YouTube Player
-export type YouTubePlayer = {
-  destroy: () => void;
-  getPlayerState?: () => number;
-} | null;
+// Type for YouTube Player (nullable)
+export type YouTubePlayer = YouTubePlayerInstance | null;

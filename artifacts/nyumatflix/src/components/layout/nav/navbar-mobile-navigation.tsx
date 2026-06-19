@@ -11,7 +11,7 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { cn } from "@/lib/utils";
-import { List, LogIn, LogOut, Menu } from "lucide-react";
+import { List, LogIn, LogOut, Menu, Settings, User } from "lucide-react";
 import { signOut } from "@/lib/auth-client";
 
 import { Link } from "wouter";
@@ -173,6 +173,21 @@ export const NavbarMobileNavigation = ({
 
                 <div className="space-y-2">
                   <Link
+                    href="/profile"
+                    onClick={handleLinkClick}
+                    className={cn(
+                      "flex items-center gap-3 w-full px-4 py-3.5 text-base font-medium rounded-xl transition-all duration-200",
+                      "text-white/90 hover:text-white",
+                      "hover:bg-white/10 hover:backdrop-blur-sm",
+                      "focus:bg-white/10 focus:text-white focus:outline-none",
+                      "active:bg-white/15",
+                    )}
+                  >
+                    <User className="h-5 w-5" />
+                    <span>Profile</span>
+                  </Link>
+
+                  <Link
                     href="/watchlist"
                     onClick={handleLinkClick}
                     className={cn(
@@ -185,6 +200,21 @@ export const NavbarMobileNavigation = ({
                   >
                     <List className="h-5 w-5" />
                     <span>Watchlist</span>
+                  </Link>
+
+                  <Link
+                    href="/settings"
+                    onClick={handleLinkClick}
+                    className={cn(
+                      "flex items-center gap-3 w-full px-4 py-3.5 text-base font-medium rounded-xl transition-all duration-200",
+                      "text-white/90 hover:text-white",
+                      "hover:bg-white/10 hover:backdrop-blur-sm",
+                      "focus:bg-white/10 focus:text-white focus:outline-none",
+                      "active:bg-white/15",
+                    )}
+                  >
+                    <Settings className="h-5 w-5" />
+                    <span>Settings</span>
                   </Link>
 
                   <button

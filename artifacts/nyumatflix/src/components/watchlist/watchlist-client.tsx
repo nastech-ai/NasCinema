@@ -158,7 +158,7 @@ export function WatchlistClient({
             a.watchlistItem.lastWatchedAt || a.watchlistItem.createdAt;
           const bDate =
             b.watchlistItem.lastWatchedAt || b.watchlistItem.createdAt;
-          return bDate.getTime() - aDate.getTime();
+          return new Date(bDate as string).getTime() - new Date(aDate as string).getTime();
         }
         case "new-episodes": {
           // Sort by new episodes first, then by episode air date
@@ -181,12 +181,12 @@ export function WatchlistClient({
             a.watchlistItem.lastWatchedAt || a.watchlistItem.createdAt;
           const bDate =
             b.watchlistItem.lastWatchedAt || b.watchlistItem.createdAt;
-          return bDate.getTime() - aDate.getTime();
+          return new Date(bDate as string).getTime() - new Date(aDate as string).getTime();
         }
         case "recently-added": {
           return (
-            b.watchlistItem.createdAt.getTime() -
-            a.watchlistItem.createdAt.getTime()
+            new Date(b.watchlistItem.createdAt as string).getTime() -
+            new Date(a.watchlistItem.createdAt as string).getTime()
           );
         }
         default:

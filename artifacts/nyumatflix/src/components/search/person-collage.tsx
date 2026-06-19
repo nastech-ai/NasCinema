@@ -79,10 +79,8 @@ export function PersonCollage({
       <div className={cn("w-full h-full relative", className)}>
         <img
           src={`https://image.tmdb.org/t/p/w185${profilePath}`}
-          
-          objectFit="cover"
           alt="Profile"
-          className="rounded-md"
+          className="w-full h-full object-cover rounded-md"
           loading="lazy"
         />
       </div>
@@ -127,10 +125,8 @@ export function PersonCollage({
               {item.poster_path ? (
                 <img
                   src={`https://image.tmdb.org/t/p/w154${item.poster_path}`}
-                  
-                  objectFit="cover"
                   alt={item.title || item.name || "Media"}
-                  className="transition-transform duration-300 group-hover:scale-105"
+                  className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
                   loading="lazy"
                 />
               ) : (
@@ -159,10 +155,8 @@ export function PersonCollage({
           {item.poster_path ? (
             <img
               src={`https://image.tmdb.org/t/p/w154${item.poster_path}`}
-              
-              objectFit="cover"
               alt={item.title || item.name || "Media"}
-              className="transition-transform duration-300 group-hover:scale-105"
+              className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
               loading="lazy"
             />
           ) : (

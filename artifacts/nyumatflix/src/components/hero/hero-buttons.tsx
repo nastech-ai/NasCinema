@@ -18,6 +18,7 @@ interface HeroButtonsProps {
   watchlistItem?: WatchlistItem | null;
   initialEpisode?: Episode | null;
   initialSeasonNumber?: number | null;
+  isPreviewPlaying?: boolean;
 }
 
 export function HeroButtons({
@@ -29,6 +30,7 @@ export function HeroButtons({
   watchlistItem,
   initialEpisode,
   initialSeasonNumber,
+  isPreviewPlaying = false,
 }: HeroButtonsProps) {
   const { selectedEpisode, setSelectedEpisode } = useEpisodeStore();
 
@@ -135,7 +137,7 @@ export function HeroButtons({
   );
 
   return (
-    <div className="flex items-center justify-center gap-2 sm:gap-3">
+    <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-3">
       {isWatchDisabled ? (
         <Tooltip>
           <TooltipTrigger asChild>{WatchButton}</TooltipTrigger>
@@ -160,7 +162,7 @@ export function HeroButtons({
         onClick={handlePlayTrailer}
       >
         <Youtube className="mr-2 h-4 w-4" />
-        <span className="text-sm">Play Trailer</span>
+        <span className="text-sm">{isPreviewPlaying ? "Full Trailer" : "Play Trailer"}</span>
       </button>
     </div>
   );

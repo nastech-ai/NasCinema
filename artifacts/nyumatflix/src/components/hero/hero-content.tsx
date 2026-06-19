@@ -4,7 +4,7 @@ import { useEpisodeStore } from "@/lib/stores/episode-store";
 import { Episode, MediaItem, Movie, TvShow } from "@/utils/typings";
 import { format } from "date-fns";
 import { AnimatePresence, motion } from "framer-motion";
-import { X } from "lucide-react";
+import { Volume2, VolumeX, X } from "lucide-react";
 import { useEffect, useMemo } from "react";
 import { MediaLogo } from "../media/media-logo";
 import { Poster } from "../media/media-poster";
@@ -21,9 +21,12 @@ interface HeroContentProps {
   isWatch: boolean;
   isPlayingVideo: boolean;
   isPlayingTrailer: boolean;
+  isPreviewPlaying: boolean;
+  isMuted: boolean;
   handleWatch(): void;
   handlePlayTrailer(): void;
   handleTrailerEnded(): void;
+  handleToggleMute(): void;
   youtubePlayer: YouTubePlayer;
   setYoutubePlayer(player: YouTubePlayer): void;
   isUpcoming?: boolean;
@@ -38,9 +41,12 @@ export function HeroContent({
   isWatch,
   isPlayingVideo,
   isPlayingTrailer,
+  isPreviewPlaying,
+  isMuted,
   handleWatch,
   handlePlayTrailer,
   handleTrailerEnded,
+  handleToggleMute,
   youtubePlayer,
   setYoutubePlayer,
   isUpcoming = false,
@@ -151,7 +157,7 @@ export function HeroContent({
       <AnimatePresence>
         {!isPlayingVideo && !isPlayingTrailer && (
           <div>
-            <HeroGradients />
+            {!isPreviewPlaying && <HeroGradients />}
 
             <motion.div
               className="absolute inset-0 flex items-center z-20 px-4 sm:px-6 lg:px-8"
@@ -242,7 +248,7 @@ export function HeroContent({
                     episodes={(media as TvShow).number_of_episodes}
                     isUpcoming={isUpcoming}
                   />
-                  {media.overview && !isWatch && (
+                  {media.overview && !isWatch && !isPreviewPlaying && (
                     <p className="text-foreground/80 mb-6">{media.overview}</p>
                   )}
                   <div className="flex items-center flex-wrap gap-4 mb-6">
@@ -255,11 +261,36 @@ export function HeroContent({
                       watchlistItem={watchlistItem}
                       initialEpisode={initialEpisode}
                       initialSeasonNumber={initialSeasonNumber}
+                      isPreviewPlaying={isPreviewPlaying}
                     />
                   </div>
                 </div>
               </div>
             </motion.div>
+
+            {/* Netflix-style mute/unmute pill — bottom-right during background preview */}
+            <AnimatePresence>
+              {isPreviewPlaying && (
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.8 }}
+                  transition={{ duration: 0.25 }}
+                  className="absolute z-30 bottom-10 right-6 sm:right-10 lg:right-16"
+                >
+                  <button
+                    onClick={handleToggleMute}
+                    className="flex items-center justify-center w-10 h-10 rounded-full border-2 border-white/60 bg-black/50 backdrop-blur-sm text-white hover:border-white hover:bg-black/70 transition-all duration-200 shadow-xl"
+                    aria-label={isMuted ? "Unmute preview" : "Mute preview"}
+                  >
+                    {isMuted
+                      ? <VolumeX size={18} strokeWidth={2} />
+                      : <Volume2 size={18} strokeWidth={2} />
+                    }
+                  </button>
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
         )}
       </AnimatePresence>

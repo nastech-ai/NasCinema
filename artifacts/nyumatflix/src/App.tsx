@@ -21,6 +21,8 @@ import PrivacyPage from "@/pages/legal/PrivacyPage";
 import TermsPage from "@/pages/legal/TermsPage";
 import DMCAPage from "@/pages/legal/DMCAPage";
 import CookiePolicyPage from "@/pages/legal/CookiePolicyPage";
+import SettingsPage from "@/pages/settings/SettingsPage";
+import ProfilePage from "@/pages/profile/ProfilePage";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -52,6 +54,8 @@ function Router() {
       <Route path="/legal/terms" component={TermsPage} />
       <Route path="/legal/dmca" component={DMCAPage} />
       <Route path="/legal/cookie-policy" component={CookiePolicyPage} />
+      <Route path="/settings" component={SettingsPage} />
+      <Route path="/profile" component={ProfilePage} />
       <Route component={NotFound} />
     </Switch>
   );

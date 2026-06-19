@@ -128,9 +128,7 @@ function SearchResultCard({ item }: { item: MediaItem }) {
           <img
             src={backdropUrl}
             alt={title || "Media backdrop"}
-            
-            objectFit="cover"
-            className="blur-sm scale-110"
+            className="w-full h-full object-cover blur-sm scale-110"
           />
         </div>
       )}

@@ -82,8 +82,6 @@ export function CastCarousel({ cast }: CastCarouselProps) {
                         alt={person.name}
                         width={185}
                         height={278}
-                        layout="responsive"
-                        objectFit="cover"
                         className="w-full h-full object-cover"
                       />
                     ) : (
@@ -152,9 +150,11 @@ export function VideoCarousel({ videos }: VideoCarouselProps) {
                 <div className="w-full flex-shrink-0">
                   <div className="rounded-lg overflow-hidden mb-3 aspect-video bg-muted">
                     <iframe
-                      src={`https://www.youtube.com/embed/${video.key}`}
+                      src={`https://www.youtube.com/embed/${video.key}?rel=0&modestbranding=1`}
                       title={video.name}
                       className="w-full h-full"
+                      sandbox="allow-scripts allow-same-origin allow-presentation allow-forms"
+                      referrerPolicy="no-referrer"
                       allowFullScreen
                       onError={() => handleVideoError(video.id, video.name)}
                     ></iframe>

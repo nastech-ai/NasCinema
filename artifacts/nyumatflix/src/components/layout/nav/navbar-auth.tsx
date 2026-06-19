@@ -22,7 +22,7 @@ export const NavbarAuth = ({
           <UserAvatar session={session} />
         ) : (
           <Link
-            href="/login"
+            href="/auth/login"
             className="block px-3 py-3 rounded-md text-base font-medium text-muted-foreground hover:text-foreground hover:bg-accent transition-colors duration-200"
             onClick={onMobileLinkClick}
           >
@@ -39,7 +39,7 @@ export const NavbarAuth = ({
       {session ? (
         <UserAvatar session={session} />
       ) : (
-        <Link href="/login">
+        <Link href="/auth/login">
           <Button variant="ghost" size="sm" className="hidden md:flex">
             <LogIn className="mr-2 h-4 w-4" />
             Sign In

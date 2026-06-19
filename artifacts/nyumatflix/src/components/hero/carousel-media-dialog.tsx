@@ -12,7 +12,7 @@ import { cn } from "@/lib/utils";
 import { Icons } from "@/lib/icons";
 import { isMovie } from "@/utils/typings";
 import { Calendar, Clock, Globe, Info, Star } from "lucide-react";
-import { Link } from "wouter";
+import { Link, useLocation } from "wouter";
 
 import { match, P } from "ts-pattern";
 import { Poster } from "../media/media-poster";

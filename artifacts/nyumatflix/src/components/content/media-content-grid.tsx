@@ -105,7 +105,7 @@ function ListViewCard(props: {
 
   const posterUrl = posterPath
     ? `https://image.tmdb.org/t/p/w500${posterPath}`
-    : "/placeholder-poster.jpg";
+    : undefined;
 
   const backdropUrl = backdropPath
     ? `https://image.tmdb.org/t/p/w1280${backdropPath}`

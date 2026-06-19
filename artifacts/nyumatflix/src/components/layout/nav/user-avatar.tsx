@@ -1,6 +1,6 @@
 import type { Session } from "@/utils/session-types";
 
-import { List, LogOut } from "lucide-react";
+import { List, LogOut, Settings, User } from "lucide-react";
 import { signOut } from "@/lib/auth-client";
 import { Link } from "wouter";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -64,10 +64,22 @@ export const UserAvatar = ({ session }: UserAvatarProps) => {
           </div>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
+        <Link href="/profile">
+          <DropdownMenuItem className="cursor-pointer">
+            <User className="mr-2 h-4 w-4" />
+            <span>Profile</span>
+          </DropdownMenuItem>
+        </Link>
         <Link href="/watchlist">
           <DropdownMenuItem className="cursor-pointer">
             <List className="mr-2 h-4 w-4" />
             <span>Watchlist</span>
+          </DropdownMenuItem>
+        </Link>
+        <Link href="/settings">
+          <DropdownMenuItem className="cursor-pointer">
+            <Settings className="mr-2 h-4 w-4" />
+            <span>Settings</span>
           </DropdownMenuItem>
         </Link>
         <DropdownMenuSeparator />
