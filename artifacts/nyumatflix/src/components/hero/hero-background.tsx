@@ -133,7 +133,8 @@ export function HeroBackground({
     if (detectedMediaType === "tv") {
       const episodeEmbedUrl = getEmbedUrl();
       if (episodeEmbedUrl) return episodeEmbedUrl;
-      return "";
+      // No episode selected — load the show URL so the streaming server handles episode selection
+      return selectedServer.getTvUrl(media.id);
     }
     return selectedServer.getMovieUrl(media.id);
   };

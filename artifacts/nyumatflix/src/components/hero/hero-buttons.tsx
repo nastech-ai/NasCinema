@@ -5,7 +5,6 @@ import { useEpisodeStore } from "@/lib/stores/episode-store";
 import { cn } from "@/lib/utils";
 import { Episode } from "@/utils/typings";
 import { Youtube } from "lucide-react";
-import { toast } from "sonner";
 import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
 import { WatchlistButton } from "../watchlist/watchlist-button";
 
@@ -35,81 +34,39 @@ export function HeroButtons({
   const { selectedEpisode, setSelectedEpisode } = useEpisodeStore();
 
   const handleWatchClick = () => {
-    // For TV shows, require episode selection
-    if (mediaType === "tv") {
-      const episodeToUse = selectedEpisode || initialEpisode;
+    if (isUpcoming) return;
 
-      if (!episodeToUse) {
-        toast.error(
-          "Please select an episode from the seasons below before watching",
-          {
-            duration: 4000,
-            action: {
-              label: "Scroll Down",
-              onClick: () => {
-                // Scroll to episodes section
-                const episodesSection =
-                  document.querySelector("[data-episodes-section]") ||
-                  document.querySelector('[role="tabpanel"]') ||
-                  document.getElementById("seasons");
-                if (episodesSection) {
-                  episodesSection.scrollIntoView({
-                    behavior: "smooth",
-                    block: "start",
-                  });
-                } else {
-                  // Fallback: scroll down a bit
-                  window.scrollBy({ top: 400, behavior: "smooth" });
-                }
-              },
-            },
-          },
-        );
-        return;
-      }
-
-      if (!selectedEpisode && initialEpisode && initialSeasonNumber) {
-        // If we're using initialEpisode but it's not in the store yet, set it
-        setSelectedEpisode(
-          initialEpisode,
-          contentId.toString(),
-          initialSeasonNumber,
-          undefined,
-          false, // Don't skip callback - we want to watch
-        );
-        // The callback will be triggered, which calls handleWatch
-        return;
-      }
+    // If a specific episode was pre-selected via initialEpisode, register it in the store
+    if (mediaType === "tv" && !selectedEpisode && initialEpisode && initialSeasonNumber) {
+      setSelectedEpisode(
+        initialEpisode,
+        contentId.toString(),
+        initialSeasonNumber,
+        undefined,
+        false,
+      );
+      return; // callback triggers handleWatch
     }
 
-    // Proceed with watch
+    // Proceed with watch (for TV without episode: streaming server handles episode picker)
     handleWatch();
   };
 
   const getWatchButtonText = () => {
-    if (isUpcoming) {
-      return "Coming Soon";
-    }
+    if (isUpcoming) return "Coming Soon";
     if (mediaType === "tv") {
       if (selectedEpisode) {
         return `Watch S${useEpisodeStore.getState().seasonNumber}E${selectedEpisode.episode_number}`;
       }
-      if (
-        watchlistItem?.lastWatchedSeason &&
-        watchlistItem?.lastWatchedEpisode
-      ) {
+      if (watchlistItem?.lastWatchedSeason && watchlistItem?.lastWatchedEpisode) {
         return `Watch S${watchlistItem.lastWatchedSeason}E${watchlistItem.lastWatchedEpisode}`;
       }
-      return "Select Episode to Watch";
+      return "Watch Now";
     }
     return "Watch Now";
   };
 
-  const isWatchDisabled =
-    isUpcoming ||
-    (mediaType === "tv" &&
-      !selectedEpisode &&
-      !watchlistItem?.lastWatchedEpisode);
+  const isWatchDisabled = isUpcoming;
 
   const getDisabledTooltip = () => {
     if (isUpcoming) {
