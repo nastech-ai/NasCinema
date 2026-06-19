@@ -98,6 +98,11 @@ export const useMediaHero = ({
     }
   }, []);
 
+  const currentItem = useMemo(
+    () => media[currentItemIndex],
+    [media, currentItemIndex],
+  );
+
   // Fetch trailer key for current item when it changes (list items don't include videos)
   useEffect(() => {
     if (!currentItem?.id || isWatch || noSlide) return;
@@ -155,11 +160,6 @@ export const useMediaHero = ({
       return () => clearInterval(interval);
     }
   }, [isPlayingVideo, noSlide, isWatch, isPlayingTrailer, isPreviewPlaying, handleNext]);
-
-  const currentItem = useMemo(
-    () => media[currentItemIndex],
-    [media, currentItemIndex],
-  );
 
   // Auto-start muted preview after delay (only on non-watch carousel pages)
   // Depends on previewTrailerKey being fetched first
