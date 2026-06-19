@@ -1,0 +1,27 @@
+kind = "mobile"
+previewPath = "/nyumatflix-mobile/"
+title = "NyumatFlix Mobile"
+version = "1.0.0"
+id = "artifacts/nyumatflix-mobile"
+router = "expo-domain"
+
+[[integratedSkills]]
+name = "expo"
+version = "1.0.0"
+
+[[services]]
+ensurePreviewReachable = "/status"
+name = "expo"
+paths = [ "/nyumatflix-mobile/" ]
+localPort = 19145
+
+[services.development]
+run = "pnpm --filter @workspace/nyumatflix-mobile run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/nyumatflix-mobile", "run", "build" ]
+run = [ "pnpm", "--filter", "@workspace/nyumatflix-mobile", "run", "serve" ]
+
+[services.env]
+PORT = "19145"
+BASE_PATH = "/nyumatflix-mobile/"

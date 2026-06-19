@@ -1,0 +1,8 @@
+uploads = []
+outputs = []
+
+[[generated]]
+id = "it5lz_lwXXTi04mU0wf9-"
+uri = "file://artifacts/nyumatflix-mobile/assets/images/icon.png"
+type = "image"
+title = "generated_image"
