@@ -39,6 +39,7 @@ export function MediaDetailHero({
     isMuted,
     youtubePlayer,
     previewPlayer,
+    previewTrailerKey,
     currentItem,
     controls,
     mediaType,
@@ -70,6 +71,7 @@ export function MediaDetailHero({
         previewPlayer={previewPlayer}
         setPreviewPlayer={setPreviewPlayer}
         anilistId={anilistId}
+        previewTrailerKey={previewTrailerKey}
       />
 
       <HeroContent

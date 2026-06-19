@@ -1,1 +1,1 @@
-- [NyumatFlix migration patterns](nyumatflix-migration.md) — key Next.js → Vite/wouter conversion rules applied during migration
+- [NyumatFlix carousel media items](nyumatflix-carousel-videos.md) — list endpoints don't include videos; must fetch detail endpoint for trailer keys

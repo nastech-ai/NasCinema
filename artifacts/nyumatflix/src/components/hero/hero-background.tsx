@@ -27,6 +27,7 @@ interface HeroBackgroundProps {
   previewPlayer: YouTubePlayer;
   setPreviewPlayer(player: YouTubePlayer): void;
   anilistId?: number | null | undefined;
+  previewTrailerKey?: string | null;
 }
 
 export function HeroBackground({
@@ -44,6 +45,7 @@ export function HeroBackground({
   previewPlayer,
   setPreviewPlayer,
   anilistId,
+  previewTrailerKey: externalPreviewKey,
 }: HeroBackgroundProps) {
   const ytReady = useYouTubeAPI();
   const { getEmbedUrl } = useEpisodeStore();
@@ -195,12 +197,15 @@ export function HeroBackground({
   }, [isPlayingTrailer, trailerKey, ytReady, onTrailerEnded, youtubePlayer, setYoutubePlayer]);
 
   // Background muted preview player (Netflix-style)
+  // Use externally-fetched key (from API) or fall back to embedded trailerKey
+  const activePreviewKey = externalPreviewKey || trailerKey;
+
   useEffect(() => {
-    if (isPreviewPlaying && trailerKey && ytReady && typeof window !== "undefined" && window.YT) {
+    if (isPreviewPlaying && activePreviewKey && ytReady && typeof window !== "undefined" && window.YT) {
       if (!previewPlayer) {
         try {
           const player = new window.YT.Player("preview-player", {
-            videoId: trailerKey,
+            videoId: activePreviewKey,
             playerVars: {
               autoplay: 1,
               mute: 1,
@@ -252,7 +257,7 @@ export function HeroBackground({
         setPreviewPlayer(null);
       }
     };
-  }, [isPreviewPlaying, trailerKey, ytReady, onPreviewEnded, previewPlayer, setPreviewPlayer]);
+  }, [isPreviewPlaying, activePreviewKey, ytReady, onPreviewEnded, previewPlayer, setPreviewPlayer]);
 
   // Sync mute state to preview player
   useEffect(() => {

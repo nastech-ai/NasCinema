@@ -16,6 +16,7 @@ export interface UseMediaHeroState {
   youtubePlayer: YouTubePlayer;
   previewPlayer: YouTubePlayer;
   historyLength: number;
+  previewTrailerKey: string | null;
 }
 
 export interface UseMediaHeroComputed {
@@ -73,6 +74,7 @@ export const useMediaHero = ({
   const [youtubePlayer, setYoutubePlayer] = useState<YouTubePlayer>(null);
   const [previewPlayer, setPreviewPlayer] = useState<YouTubePlayer>(null);
   const [historyLength, setHistoryLength] = useState<number>(2);
+  const [previewTrailerKey, setPreviewTrailerKey] = useState<string | null>(null);
   const controls = useAnimation();
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const previewTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -89,11 +91,44 @@ export const useMediaHero = ({
       try { player.destroy(); } catch { /* ignore */ }
     }
     setPreviewPlayer(null);
+    setPreviewTrailerKey(null);
     if (previewTimerRef.current) {
       clearTimeout(previewTimerRef.current);
       previewTimerRef.current = null;
     }
   }, []);
+
+  // Fetch trailer key for current item when it changes (list items don't include videos)
+  useEffect(() => {
+    if (!currentItem?.id || isWatch || noSlide) return;
+
+    // First try the embedded videos data (detail pages already have it)
+    const existingVideos = getVideosFromItem(currentItem);
+    const existingTrailer = existingVideos.find((v) => ACCEPTABLE_VIDEO_TYPES.includes(v.type));
+    if (existingTrailer?.key) {
+      setPreviewTrailerKey(existingTrailer.key);
+      return;
+    }
+
+    // Otherwise fetch from the API
+    const isTv = currentItem.media_type === "tv" ||
+      currentItem.name !== undefined ||
+      currentItem.first_air_date !== undefined;
+    const endpoint = isTv ? `/api/tv/${currentItem.id}` : `/api/movies/${currentItem.id}`;
+
+    let cancelled = false;
+    fetch(endpoint)
+      .then((r) => r.json())
+      .then((data: unknown) => {
+        if (cancelled) return;
+        const vids = getVideosFromItem(data as MediaItem);
+        const trailer = vids.find((v) => ACCEPTABLE_VIDEO_TYPES.includes(v.type));
+        if (trailer?.key) setPreviewTrailerKey(trailer.key);
+      })
+      .catch(() => { /* ignore */ });
+
+    return () => { cancelled = true; };
+  }, [currentItem?.id, isWatch, noSlide]);
 
   const handleNext = useCallback(() => {
     setCurrentItemIndex((prevIndex) =>
@@ -127,13 +162,15 @@ export const useMediaHero = ({
   );
 
   // Auto-start muted preview after delay (only on non-watch carousel pages)
+  // Depends on previewTrailerKey being fetched first
   useEffect(() => {
     if (isWatch || noSlide || isPlayingVideo || isPlayingTrailer) return;
+    if (!previewTrailerKey) return; // wait until trailer key is fetched
 
-    // Check current item has a trailer
-    const videos = getVideosFromItem(currentItem);
-    const trailer = videos.find((v) => ACCEPTABLE_VIDEO_TYPES.includes(v.type));
-    if (!trailer?.key) return;
+    if (previewTimerRef.current) {
+      clearTimeout(previewTimerRef.current);
+      previewTimerRef.current = null;
+    }
 
     previewTimerRef.current = setTimeout(() => {
       setIsPreviewPlaying(true);
@@ -146,7 +183,7 @@ export const useMediaHero = ({
         previewTimerRef.current = null;
       }
     };
-  }, [currentItemIndex, isWatch, noSlide, isPlayingVideo, isPlayingTrailer]);
+  }, [previewTrailerKey, isWatch, noSlide, isPlayingVideo, isPlayingTrailer]);
 
   const handleWatch = useCallback(() => {
     setIsPlayingTrailer(false);
@@ -275,6 +312,7 @@ export const useMediaHero = ({
     youtubePlayer,
     previewPlayer,
     historyLength,
+    previewTrailerKey,
     currentItem,
     controls,
     mediaType,
